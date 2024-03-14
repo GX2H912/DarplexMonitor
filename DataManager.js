@@ -241,8 +241,8 @@ const returnAllCustomBuilds = async id => {
 };
 
 const returnRank = async id => {
-    account = await AccountRank.findAll({
-        where: { accountId: id }
+    let account = await AccountRank.findAll({ 
+        where: { accountId: id, primaryGroup: 1}
     });
     if (account.length === 0) return 'PLAYER';
     return account[0].rankIdentifier;
@@ -318,38 +318,23 @@ const filterActiveBoosters = async boosters => {
 
 const returnAllBoosters = async () => {
     const boosters = await Booster.findAll();
-    if (boosters.length === 0) {
-        return {}
-    }
+    if (boosters.length === 0) return {};
     return filterActiveBoosters(boosters);
 }
 
 const returnBoostersInGroup = async boosterGroup => {
-    const boosters = await Booster.findAll({
-        where: {
-            boosterGroup
-        }
-    })
-    if (boosters.length === 0) {
-        return {}
-    }
+    const boosters = await Booster.findAll({ where: { boosterGroup } });
+    if (boosters.length === 0) return {};
     return filterActiveBoosters(boosters);
 }
 
 const returnNewBoosterStartTime = async boosterGroup => {
     let startTime = new Date().getTime()
     const boosters = await Booster.findAll({
-        where: {
-            boosterGroup
-        },
+        where: { boosterGroup },
         order: [['startTime', 'DESC']],
       });
-    if (boosters.length === 0) {
-        return startTime
-    }
-    if (!boostIsActive(boosters[0].startTime)) {
-        return startTime
-    }
+    if (boosters.length === 0 || !boostIsActive(boosters[0].startTime)) return startTime;
     startTime = boosters[0].startTime + 3600000;
     return startTime;
 }
@@ -442,38 +427,6 @@ const getNameByUuid = async uuid => {
     const data = await response.json();
     return data.name;
 }
-
-
-// module.exports = (sequelize, DataTypes, playerAccounts) => {
-//     const Transaction = sequelize.define(
-//         'transaction',
-//         {
-//             accountId: {
-//                 type: DataTypes.INTEGER(11),
-//                 references: {
-//                     model: playerAccounts.Account,
-//                     key: 'id',
-//                     onDelete: 'CASCADE',
-//                     onUpdate: 'CASCADE'
-//                 }
-//             },
-//             date: {
-//                 type: DataTypes.BIGINT(20)
-//             },
-//             name: {
-//                 type: DataTypes.STRING(255),
-//                 allowNull: true
-//             },
-//             gems: {
-//                 type: DataTypes.INTEGER,
-//                 defaultValue: 0
-//             },
-//             coins: { 
-//                 type: DataTypes.INTEGER,
-//                 defaultValue: 0
-//             }
-//         }, { timestamps: false }
-//     );
 
 
 const updateAccountPurchases = async (name, createParams) => {
