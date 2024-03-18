@@ -5,7 +5,7 @@ const mysql = require("mysql");
 const run_pre_sequelize = async () => {
     const connection = await mysql.createConnection({
         host: dbConfig.HOST, 
-        port: 3306, 
+        port: dbConfig.PORT, 
         user: dbConfig.USER, 
         password: dbConfig.PASSWORD
     })
