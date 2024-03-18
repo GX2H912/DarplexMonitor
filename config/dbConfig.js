@@ -1,5 +1,6 @@
 module.exports = {
     HOST: process.env.DB_HOST || '0.0.0.0', // or change this to just 127.0.0.1
+    PORT: 3306,
     USER: 'root',
     PASSWORD: 'password',
     DB: 'account',
